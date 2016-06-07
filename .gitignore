@@ -1,8 +1,11 @@
 *.log
+.idea
 .htaccess
 sitemap.xml
 sitemap.xml.gz
 wp-config.php
+wp-content/mu-plugins/
+wp-content/mysql.php
 wp-content/advanced-cache.php
 wp-content/backup-db/
 wp-content/backups/
@@ -12,7 +15,7 @@ wp-content/upgrade/
 wp-content/uploads/
 wp-content/wp-cache-config.php
 wp-content/plugins/hello.php
-
+srdb/
 /readme.html
 /license.txt
 
