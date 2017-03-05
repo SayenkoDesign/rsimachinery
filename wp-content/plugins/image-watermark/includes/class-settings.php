@@ -5,6 +5,11 @@ if ( ! defined( 'ABSPATH' ) )
 
 new Image_Watermark_Settings( );
 
+/**
+ * Image Watermark settings class.
+ *
+ * @class Image_Watermark_Settings
+ */
 class Image_Watermark_Settings {
 	private $image_sizes;
 	private $watermark_positions = array(
@@ -13,7 +18,7 @@ class Image_Watermark_Settings {
 	);
 
 	/**
-	 *
+	 * Class constructor.
 	 */
 	public function __construct( )	{
 		// actions
@@ -34,6 +39,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Get post types.
+	 * 
+	 * @return array
 	 */
 	private function get_post_types() {
 		return array_merge( array( 'post', 'page' ), get_post_types( array( '_builtin' => false ), 'names' ) );
@@ -80,6 +87,11 @@ class Image_Watermark_Settings {
 		add_settings_field( 'iw_protection_right_click', __( 'Right click', 'image-watermark' ), array( $this, 'iw_protection_right_click' ), 'image_watermark_options', 'image_watermark_protection' );
 		add_settings_field( 'iw_protection_drag_drop', __( 'Drag and drop', 'image-watermark' ), array( $this, 'iw_protection_drag_drop' ), 'image_watermark_options', 'image_watermark_protection' );
 		add_settings_field( 'iw_protection_logged', __( 'Logged-in users', 'image-watermark' ), array( $this, 'iw_protection_logged' ), 'image_watermark_options', 'image_watermark_protection' );
+
+		// Backup
+		add_settings_section( 'image_watermark_backup', __( 'Image backup', 'image-watermark' ), '', 'image_watermark_options' );
+		add_settings_field( 'iw_backup_image', __( 'Backup full size image', 'image-watermark' ), array( $this, 'iw_backup_image' ), 'image_watermark_options', 'image_watermark_backup' );
+		add_settings_field( 'iw_backup_image_quality', __( 'Backup image quality', 'image-watermark' ), array( $this, 'iw_backup_image_quality' ), 'image_watermark_options', 'image_watermark_backup' );	
 	}
 
 	/**
@@ -104,7 +116,7 @@ class Image_Watermark_Settings {
 			<h2>' . __( 'Image Watermark', 'image-watermark' ) . '</h2>';
 
 		echo '
-			<div class="image-watermark-settings">
+			<div class="image-watermark-settings metabox-holder">
 				<div class="df-sidebar">
 					<div class="df-credits">
 						<h3 class="hndle">' . __( 'Image Watermark', 'image-watermark' ) . ' ' . Image_Watermark()->defaults['version'] . '</h3>
@@ -113,12 +125,6 @@ class Image_Watermark_Settings {
 							<p class="inner">' . __( 'If you are having problems with this plugin, checkout plugin', 'image-watermark' ) . '  <a href="http://www.dfactory.eu/docs/image-watermark-plugin/?utm_source=image-watermark-settings&utm_medium=link&utm_campaign=documentation" target="_blank" title="' . __( 'Documentation', 'image-watermark' ) . '">' . __( 'Documentation', 'image-watermark' ) . '</a> ' . __( 'or talk about them in the', 'image-watermark' ) . ' <a href="http://www.dfactory.eu/support/?utm_source=image-watermark-settings&utm_medium=link&utm_campaign=support" target="_blank" title="' . __( 'Support forum', 'image-watermark' ) . '">' . __( 'Support forum', 'image-watermark' ) . '</a></p>
 							<hr />
 							<h4 class="inner">' . __( 'Do you like this plugin?', 'image-watermark' ) . '</h4>
-							<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" class="inner">
-								<input type="hidden" name="cmd" value="_s-xclick">
-								<input type="hidden" name="hosted_button_id" value="DCF3AXC9A5A88">
-								<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-								<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-							</form>
 							<p class="inner"><a href="http://wordpress.org/support/view/plugin-reviews/image-watermark" target="_blank" title="' . __( 'Rate it 5', 'image-watermark' ) . '">' . __( 'Rate it 5', 'image-watermark' ) . '</a> ' . __( 'on WordPress.org', 'image-watermark' ) . '<br />' .
 		__( 'Blog about it & link to the', 'image-watermark' ) . ' <a href="http://www.dfactory.eu/plugins/image-watermark/?utm_source=image-watermark-settings&utm_medium=link&utm_campaign=blog-about" target="_blank" title="' . __( 'plugin page', 'image-watermark' ) . '">' . __( 'plugin page', 'image-watermark' ) . '</a><br />' .
 		__( 'Check out our other', 'image-watermark' ) . ' <a href="http://www.dfactory.eu/plugins/?utm_source=image-watermark-settings&utm_medium=link&utm_campaign=other-plugins" target="_blank" title="' . __( 'WordPress plugins', 'image-watermark' ) . '">' . __( 'WordPress plugins', 'image-watermark' ) . '</a>
@@ -127,10 +133,15 @@ class Image_Watermark_Settings {
 							<p class="df-link inner">' . __( 'Created by', 'image-watermark' ) . ' <a href="http://www.dfactory.eu/?utm_source=image-watermark-settings&utm_medium=link&utm_campaign=created-by" target="_blank" title="dFactory - Quality plugins for WordPress"><img src="' . plugins_url( '../images/logo-dfactory.png', __FILE__ ) . '" title="dFactory - Quality plugins for WordPress" alt="dFactory - Quality plugins for WordPress" /></a></p>
 						</div>
 					</div>
-				<form action="options.php" method="post">';
-
+					<div class="df-promo">
+						<h4 class="inner">' . __( 'Need image optimization?', 'image-watermark' ) . '</h4>
+						<p class="inner">' . sprintf( __( 'Speed up your site with <a href="%s" target="_blank">ShortPixel</a>. Sign up as Image Watermark user and get 50&#37; extra monthly optimizations!', 'image-watermark' ), 'https://shortpixel.com/h/af/E0IQA8M124741' ) . '</p>
+					</div>
+				</div>
+				<form action="options.php" method="post">
+					<div id="main-sortables" class="meta-box-sortables ui-sortable">';
 		settings_fields( 'image_watermark_options' );
-		do_settings_sections( 'image_watermark_options' );
+		$this->do_settings_sections( 'image_watermark_options' );
 
 		echo '
 					<p class="submit">';
@@ -142,17 +153,30 @@ class Image_Watermark_Settings {
 
 		echo '
 					</p>
+					</div>
 				</form>
 			</div>
 			<div class="clear"></div>
 		</div>';
+		?>
+			<script type="text/javascript">
+				//<![CDATA[
+				jQuery(document).ready( function ($) {
+					// close postboxes that should be closed
+					$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
+					// postboxes setup
+					postboxes.add_postbox_toggles('watermark-options');
+				});
+				//]]>
+			</script>
+		<?php
 	}
 
 	/**
 	 * Validate options.
 	 * 
-	 * @param 	array $input
-	 * @return 	array
+	 * @param array $input
+	 * @return array
 	 */
 	public function validate_options( $input ) {
 		if ( ! current_user_can( 'manage_options' ) )
@@ -200,6 +224,7 @@ class Image_Watermark_Settings {
 			$input['watermark_image']['frontend_active'] = isset( $_POST['iw_options']['watermark_image']['frontend_active'] ) ? ((bool) $_POST['iw_options']['watermark_image']['frontend_active'] == 1 ? true : false) : Image_Watermark()->defaults['options']['watermark_image']['frontend_active'];
 			$input['watermark_image']['deactivation_delete'] = isset( $_POST['iw_options']['watermark_image']['deactivation_delete'] ) ? ((bool) $_POST['iw_options']['watermark_image']['deactivation_delete'] == 1 ? true : false) : Image_Watermark()->defaults['options']['watermark_image']['deactivation_delete'];
 
+
 			$positions = array();
 
 			foreach ( $this->watermark_positions['y'] as $position_y ) {
@@ -224,6 +249,9 @@ class Image_Watermark_Settings {
 			$input['image_protection']['draganddrop'] = isset( $_POST['iw_options']['image_protection']['draganddrop'] ) ? ((bool) $_POST['iw_options']['image_protection']['draganddrop'] == 1 ? true : false) : Image_Watermark()->defaults['options']['image_protection']['draganddrop'];
 			$input['image_protection']['forlogged'] = isset( $_POST['iw_options']['image_protection']['forlogged'] ) ? ((bool) $_POST['iw_options']['image_protection']['forlogged'] == 1 ? true : false) : Image_Watermark()->defaults['options']['image_protection']['forlogged'];
 
+			$input['backup']['backup_image'] = isset( $_POST['iw_options']['backup']['backup_image'] );
+			$input['backup']['backup_quality'] = isset( $_POST['iw_options']['backup']['backup_quality'] ) ? (int) $_POST['iw_options']['backup']['backup_quality'] : Image_Watermark()->defaults['options']['backup']['backup_quality'];
+
 			add_settings_error( 'iw_settings_errors', 'iw_settings_saved', __( 'Settings saved.', 'image-watermark' ), 'updated' );
 		} elseif ( isset( $_POST['reset_image_watermark_options'] ) ) {
 
@@ -245,6 +273,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * PHP extension.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_extension() {
 		echo '
@@ -266,6 +296,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Automatic watermarking option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_automatic_watermarking() {
 		?>
@@ -278,6 +310,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Manual watermarking option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_manual_watermarking() {
 		?>
@@ -290,6 +324,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Enable watermark for option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_enable_for() {
 		?>
@@ -344,6 +380,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Frontend watermarking option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_frontend_watermarking() {
 		?>
@@ -357,6 +395,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Remove data on deactivation option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_deactivation() {
 		?>
@@ -369,6 +409,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark alignment option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_alignment() {
 		?>
@@ -400,6 +442,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark offset option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_offset() {
 		?>
@@ -413,6 +457,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark image option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_image() {
 		if ( Image_Watermark()->options['watermark_image']['url'] !== NULL && Image_Watermark()->options['watermark_image']['url'] != 0 ) {
@@ -423,9 +469,9 @@ class Image_Watermark_Settings {
 		}
 		?>
 		<div class="iw_watermark_image">
-			<input id="upload_image" type="hidden" name="iw_options[watermark_image][url]" value="<?php echo (int) Image_Watermark()->options['watermark_image']['url']; ?>" />
-			<input id="upload_image_button" type="button" class="button button-secondary" value="<?php echo __( 'Select image', 'image-watermark' ); ?>" />
-			<input id="turn_off_image_button" type="button" class="button button-secondary" value="<?php echo __( 'Remove image', 'image-watermark' ); ?>" <?php if ( $image_selected === false ) echo 'disabled="disabled"'; ?>/>
+			<input id="iw_upload_image" type="hidden" name="iw_options[watermark_image][url]" value="<?php echo (int) Image_Watermark()->options['watermark_image']['url']; ?>" />
+			<input id="iw_upload_image_button" type="button" class="button button-secondary" value="<?php echo __( 'Select image', 'image-watermark' ); ?>" />
+			<input id="iw_turn_off_image_button" type="button" class="button button-secondary" value="<?php echo __( 'Remove image', 'image-watermark' ); ?>" <?php if ( $image_selected === false ) echo 'disabled="disabled"'; ?>/>
 			<p class="description"><?php _e( 'You have to save changes after the selection or removal of the image.', 'image-watermark' ); ?></p>
 		</div>
 		<?php
@@ -433,6 +479,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark image preview.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_preview() {
 		if ( Image_Watermark()->options['watermark_image']['url'] !== NULL && Image_Watermark()->options['watermark_image']['url'] != 0 ) {
@@ -470,6 +518,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark size option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_size() {
 		?>
@@ -489,6 +539,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark custom size option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_size_custom() {
 		?>
@@ -503,6 +555,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark scaled size option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_size_scaled() {
 		?>
@@ -520,6 +574,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Watermark custom size option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_watermark_opacity() {
 		?>
@@ -537,6 +593,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Image quality option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_image_quality() {
 		?>
@@ -554,6 +612,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Image format option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_image_format() {
 		?>
@@ -571,6 +631,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Right click image protection option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_protection_right_click() {
 		?>
@@ -583,6 +645,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Drag and drop image protection option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_protection_drag_drop() {
 		?>
@@ -595,6 +659,8 @@ class Image_Watermark_Settings {
 
 	/**
 	 * Logged-in users image protection option.
+	 * 
+	 * @return mixed
 	 */
 	public function iw_protection_logged() {
 		?>
@@ -604,4 +670,73 @@ class Image_Watermark_Settings {
 		</label>
 		<?php
 	}
+
+	/**
+	 * Backup the original image
+	 * 
+	 * @return mixed
+	 */
+	public function iw_backup_image() {
+		?>
+		<label for="iw_backup_size_full">
+			<input id="iw_backup_size_full" type="checkbox" <?php checked( ! empty( Image_Watermark()->options['backup']['backup_image'] ), true, true ); ?> value="1" name="iw_options[backup][backup_image]">
+<?php echo __( 'Backup the full size image.', 'image-watermark' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * Image backup quality option.
+	 * 
+	 * @return mixed
+	 */
+	public function iw_backup_image_quality() {
+		?>
+		<fieldset id="iw_backup_image_quality">
+			<div>
+				<input type="text" id="iw_backup_quality_input" maxlength="3" class="hide-if-js" name="iw_options[backup][backup_quality]" value="<?php echo Image_Watermark()->options['backup']['backup_quality']; ?>" />
+				<div class="wplike-slider">
+					<span class="left hide-if-no-js">0</span><span class="middle" id="iw_backup_quality_span" title="<?php echo Image_Watermark()->options['backup']['backup_quality']; ?>"></span><span class="right hide-if-no-js">100</span>
+				</div>
+			</div>
+		</fieldset>
+		<p class="description"><?php _e( 'Set output image quality.', 'image-watermark' ); ?></p>
+		<?php
+	}
+	
+	/**
+	 * This function is similar to the function in the Settings API, only the output HTML is changed.
+	 * Print out the settings fields for a particular settings section
+	 *
+	 * @global $wp_settings_fields Storage array of settings fields and their pages/sections
+	 *
+	 * @since 0.1
+	 *
+	 * @param string $page Slug title of the admin page who's settings fields you want to show.
+	 * @param string $section Slug title of the settings section who's fields you want to show.
+	 */
+	function do_settings_sections( $page ) {
+		global $wp_settings_sections, $wp_settings_fields;
+	 
+		if ( ! isset( $wp_settings_sections[$page] ) )
+			return;
+	 
+		foreach ( (array) $wp_settings_sections[$page] as $section ) {
+			echo '<div id="" class="stuffbox postbox '.$section['id'].'">';
+			echo '<button type="button" class="handlediv button-link" aria-expanded="true"><span class="screen-reader-text">' . __('Toggle panel', 'image-watermark') . '</span><span class="toggle-indicator" aria-hidden="true"></span></button>';
+			if ( $section['title'] )
+				echo "<h3 class=\"hndle\"><span>{$section['title']}</span></h3>\n";
+	 
+			if ( $section['callback'] )
+				call_user_func( $section['callback'], $section );
+	 
+			if ( ! isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section['id']] ) )
+				continue;
+			echo '<div class="inside"><table class="form-table">';
+			do_settings_fields( $page, $section['id'] );
+			echo '</table></div>';
+			echo '</div>';
+		}
+	}
+
 }

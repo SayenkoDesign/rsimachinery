@@ -170,13 +170,8 @@ class WP_Plugin_Install_List_Table extends WP_List_Table {
 				break;
 
 			case 'favorites':
-				$action = 'save_wporg_username_' . get_current_user_id();
-				if ( isset( $_GET['_wpnonce'] ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), $action ) ) {
-					$user = isset( $_GET['user'] ) ? wp_unslash( $_GET['user'] ) : get_user_option( 'wporg_favorites' );
-					update_user_meta( get_current_user_id(), 'wporg_favorites', $user );
-				} else {
-					$user = get_user_option( 'wporg_favorites' );
-				}
+				$user = isset( $_GET['user'] ) ? wp_unslash( $_GET['user'] ) : get_user_option( 'wporg_favorites' );
+				update_user_meta( get_current_user_id(), 'wporg_favorites', $user );
 				if ( $user )
 					$args['user'] = $user;
 				else
